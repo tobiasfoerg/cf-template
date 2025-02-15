@@ -5,36 +5,47 @@ import {
 	Scripts,
 	ScrollRestoration,
 	isRouteErrorResponse,
+	useRouteLoaderData,
 } from "react-router";
 
+import { RouterProvider } from "@/components/router-provider";
 import type { Route } from "./+types/root";
-import stylesheet from "./app.css?url";
 
-export const links: Route.LinksFunction = () => [
-	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
-	{
-		rel: "preconnect",
-		href: "https://fonts.gstatic.com",
-		crossOrigin: "anonymous",
-	},
-	{
-		rel: "stylesheet",
-		href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-	},
-	{ rel: "stylesheet", href: stylesheet },
-];
+import { preload } from "react-dom";
+import { getSessionWithDefaults } from "./lib/cookie.server";
+import stylesheet from "./styles/app.css?url";
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+	const preferences = await getSessionWithDefaults(request, {
+		locale: context.locale,
+		theme: "system",
+		timezone: context.timezone,
+		sidebar: "expanded",
+	});
+
+	return {
+		preferences,
+	};
+}
+
+export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
+	preload(stylesheet, { as: "style" });
+	return await serverLoader();
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
+	const data = useRouteLoaderData<typeof clientLoader>("root");
 	return (
-		<html lang="en">
+		<html lang="en" data-theme={data?.preferences.theme}>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<Meta />
 				<Links />
+				<link href={stylesheet} rel="stylesheet" />
 			</head>
 			<body>
-				{children}
+				<RouterProvider>{children}</RouterProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -53,10 +64,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
 	if (isRouteErrorResponse(error)) {
 		message = error.status === 404 ? "404" : "Error";
-		details =
-			error.status === 404
-				? "The requested page could not be found."
-				: error.statusText || details;
+		details = error.status === 404 ? "The requested page could not be found." : error.statusText || details;
 	} else if (import.meta.env.DEV && error && error instanceof Error) {
 		details = error.message;
 		stack = error.stack;

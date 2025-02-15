@@ -7,17 +7,14 @@
 		"src/**/.server/**/*",
 		"src/**/.client/**/*",
 		"worker/**/*",
-		"worker-configuration.d.ts"
+		"worker-configuration.d.ts",
+		"src/lib/auth/.client"
 	],
 	"compilerOptions": {
 		"composite": true,
 		"strict": true,
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"types": [
-			"@cloudflare/workers-types",
-			"vite/client",
-			"./worker-configuration.d.ts"
-		],
+		"types": ["@cloudflare/workers-types", "vite/client", "./worker-configuration.d.ts"],
 		"target": "ES2022",
 		"module": "ES2022",
 		"moduleResolution": "bundler",
@@ -25,7 +22,8 @@
 		"baseUrl": ".",
 		"rootDirs": [".", "./.react-router/types"],
 		"paths": {
-			"~/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"ui": ["./src/components/ui"]
 		},
 		"esModuleInterop": true,
 		"resolveJsonModule": true

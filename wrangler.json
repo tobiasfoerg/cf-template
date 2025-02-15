@@ -2,9 +2,31 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "my-worker",
 	"main": "./worker/app.ts",
+	"assets": {
+		"directory": "./dist/client"
+	},
 	"compatibility_date": "2025-01-23",
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_flags": ["nodejs_compat", "nodejs_als"],
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true,
 	"vars": {
 		"ENVIRONMENT": "development"
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_id": "cf-dashboard",
+			"database_name": "cf-dashboard",
+			"migrations_dir": "./drizzle",
+			"migrations_table": "__migrations"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "cf-dashboard"
+		}
+	]
 }

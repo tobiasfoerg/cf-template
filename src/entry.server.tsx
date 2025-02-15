@@ -14,21 +14,18 @@ export default async function handleRequest(
 	const userAgent = request.headers.get("user-agent");
 
 	let status = responseStatusCode;
-	const body = await renderToReadableStream(
-		<ServerRouter context={routerContext} url={request.url} />,
-		{
-			signal: request.signal,
-			onError(error: unknown) {
-				status = 500;
-				// Log streaming rendering errors from inside the shell.  Don't log
-				// errors encountered during initial shell rendering since they'll
-				// reject and get logged in handleDocumentRequest.
-				if (shellRendered) {
-					console.error(error);
-				}
-			},
+	const body = await renderToReadableStream(<ServerRouter context={routerContext} url={request.url} />, {
+		signal: request.signal,
+		onError(error: unknown) {
+			status = 500;
+			// Log streaming rendering errors from inside the shell.  Don't log
+			// errors encountered during initial shell rendering since they'll
+			// reject and get logged in handleDocumentRequest.
+			if (shellRendered) {
+				console.error(error);
+			}
 		},
-	);
+	});
 	shellRendered = true;
 
 	// Ensure requests from bots and SPA Mode renders wait for all content to load before responding

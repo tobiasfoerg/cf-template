@@ -1,0 +1,11 @@
+{
+	"$schema": "https://sly-cli.fly.dev/registry/config.json",
+	"libraries": [
+		{
+			"name": "lucide-icons",
+			"directory": "./resources/icons",
+			"postinstall": [],
+			"transformers": []
+		}
+	]
+}
