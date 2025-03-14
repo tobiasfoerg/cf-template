@@ -31,7 +31,7 @@ import { composeTailwindRenderProps } from "./primitive"
 import { Sheet } from "./sheet"
 import { Tooltip } from "./tooltip"
 
-const SIDEBAR_COOKIE_NAME = "sidebar:state"
+export const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 type SidebarContextProps = {
   state: "expanded" | "collapsed"
@@ -307,13 +307,13 @@ const footer = tv({
     "**:data-[slot=menu-trigger]:relative **:data-[slot=menu-trigger]:overflow-hidden",
     " **:data-[slot=menu-trigger]:rounded-lg",
     "**:data-[slot=menu-trigger]:flex **:data-[slot=menu-trigger]:cursor-default **:data-[slot=menu-trigger]:items-center **:data-[slot=menu-trigger]:p-2 **:data-[slot=menu-trigger]:outline-hidden sm:**:data-[slot=menu-trigger]:text-sm",
-    "**:data-[slot=menu-trigger]:data-hovered:bg-(--sidebar-accent) **:data-[slot=menu-trigger]:data-hovered:text-fg",
+    "**:data-[slot=menu-trigger]:hover:bg-(--sidebar-accent) **:data-[slot=menu-trigger]:hover:text-fg",
   ],
   variants: {
     collapsed: {
       false: [
         "**:data-[slot=avatar]:*:size-8 **:data-[slot=menu-trigger]:**:data-[slot=avatar]:mr-2 **:data-[slot=avatar]:size-8",
-        "**:data-[slot=menu-trigger]:**:data-[slot=chevron]:ml-auto **:data-[slot=menu-trigger]:**:data-[slot=chevron]:transition-transform **:data-[slot=menu-trigger]:w-full **:data-[slot=menu-trigger]:data-pressed:**:data-[slot=chevron]:rotate-180",
+        "**:data-[slot=menu-trigger]:**:data-[slot=chevron]:ml-auto **:data-[slot=menu-trigger]:pressed:**:data-[slot=chevron]:rotate-180 **:data-[slot=menu-trigger]:**:data-[slot=chevron]:transition-transform **:data-[slot=menu-trigger]:w-full",
       ],
       true: [
         "**:data-[slot=avatar]:*:size-6 **:data-[slot=avatar]:size-6",
@@ -399,7 +399,7 @@ const sidebarItemStyles = tv({
       true: "flex not-has-data-[slot=icon]:hidden size-9 items-center justify-center gap-x-0 p-0 **:data-[slot=menu-trigger]:hidden",
     },
     isCurrent: {
-      true: "bg-(--sidebar-accent) text-fg data-hovered:bg-(--sidebar-accent)/90 data-hovered:text-fg **:data-[slot=menu-trigger]:from-(--sidebar-accent) **:data-[slot=icon]:text-fg [&_.text-muted-fg]:text-fg/80",
+      true: "bg-(--sidebar-accent) text-fg hover:bg-(--sidebar-accent)/90 hover:text-fg **:data-[slot=menu-trigger]:from-(--sidebar-accent) **:data-[slot=icon]:text-fg [&_.text-muted-fg]:text-fg/80",
     },
     isActive: {
       true: "bg-(--sidebar-accent) text-sidebar-fg **:data-[slot=menu-trigger]:flex",
@@ -627,11 +627,11 @@ const SidebarDisclosureTrigger = ({ className, ref, ...props }: SidebarDisclosur
   )
 }
 
-const SidebarDisclosurePanel = ({className, ...props}: React.ComponentProps<typeof DisclosurePanel>) => {
+const SidebarDisclosurePanel = (props: React.ComponentProps<typeof DisclosurePanel>) => {
   return (
     <DisclosurePanel
       data-sidebar-disclosure-panel="true"
-      className={composeTailwindRenderProps(className, "col-span-full grid grid-cols-[auto_1fr] gap-y-0.5")}
+      className="col-span-full grid grid-cols-[auto_1fr] gap-y-0.5"
       {...props}
     />
   )
@@ -656,7 +656,7 @@ const SidebarTrigger = ({ onPress, children, ...props }: React.ComponentProps<ty
     <Button
       aria-label={props["aria-label"] || "Toggle Sidebar"}
       data-sidebar-trigger="true"
-      appearance={props.appearance || "plain"}
+      intent={props.intent || "plain"}
       size={props.size || "square-petite"}
       onPress={(event) => {
         onPress?.(event)
@@ -687,7 +687,7 @@ const SidebarRail = ({ className, ref, ...props }: React.ComponentProps<"button"
       tabIndex={-1}
       onClick={toggleSidebar}
       className={cn(
-        "-translate-x-1/2 group-data-[sidebar-side=left]/sidebar-container:-right-4 absolute inset-y-0 z-20 hidden w-4 outline-hidden transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] data-hovered:after:bg-transparent group-data-[sidebar-side=right]/sidebar-container:left-0 sm:flex",
+        "-translate-x-1/2 group-data-[sidebar-side=left]/sidebar-container:-right-4 absolute inset-y-0 z-20 hidden w-4 outline-hidden transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-transparent group-data-[sidebar-side=right]/sidebar-container:left-0 sm:flex",
         "in-data-[sidebar-side=left]:cursor-w-resize in-data-[sidebar-side=right]:cursor-e-resize",
         "[[data-sidebar-side=left][data-sidebar-state=collapsed]_&]:cursor-e-resize [[data-sidebar-side=right][data-sidebar-state=collapsed]_&]:cursor-w-resize",
         "group-data-[sidebar-collapsible=hidden]/sidebar-container:translate-x-0 group-data-[sidebar-collapsible=hidden]/sidebar-container:hover:bg-secondary group-data-[sidebar-collapsible=hidden]/sidebar-container:after:left-full",
@@ -707,6 +707,7 @@ const SidebarLabel = ({ className, ref, ...props }: SidebarLabelProps) => {
   if (!collapsed) {
     return (
       <Text
+        tabIndex={-1}
         ref={ref}
         slot="label"
         className={cn("col-start-2 overflow-hidden whitespace-nowrap", className)}

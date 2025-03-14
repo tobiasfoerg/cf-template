@@ -1,28 +1,30 @@
 import { cn } from "@/utils/classes"
 import { IconSearch } from "justd-icons"
 import { createContext, use, useEffect } from "react"
-import { useFilter } from "react-aria"
+import type {
+  AutocompleteProps,
+  CollectionRenderer,
+  MenuProps,
+  MenuTriggerProps,
+  SearchFieldProps,
+} from "react-aria-components"
 import {
-  UNSTABLE_Autocomplete as Autocomplete,
-  type AutocompleteProps,
+  Autocomplete,
   Button,
   Collection,
-  type CollectionRenderer,
-  UNSTABLE_CollectionRendererContext as CollectionRendererContext,
-  UNSTABLE_DefaultCollectionRenderer as DefaultCollectionRenderer,
+  CollectionRendererContext,
+  DefaultCollectionRenderer,
   Dialog,
   Header,
   Input,
   Menu as MenuPrimitive,
-  type MenuProps,
   MenuSection,
-  type MenuTriggerProps,
   Modal,
   ModalContext,
   ModalOverlay,
   OverlayTriggerStateContext,
   SearchField,
-  type SearchFieldProps,
+  useFilter,
 } from "react-aria-components"
 import { tv } from "tailwind-variants"
 import { DropdownKeyboard } from "./dropdown"
@@ -141,12 +143,12 @@ const CommandMenuSearch = ({ className, placeholder, ...props }: CommandMenuSear
       )}
       <Input
         placeholder={placeholder ?? "Search..."}
-        className="w-full min-w-0 bg-transparent px-2.5 py-2 text-base text-fg placeholder-muted-fg outline-hidden data-focused:outline-hidden sm:text-sm [&::-ms-reveal]:hidden [&::-webkit-search-cancel-button]:hidden"
+        className="w-full min-w-0 bg-transparent px-2.5 py-2 text-base text-fg placeholder-muted-fg outline-hidden focus:outline-hidden sm:text-sm [&::-ms-reveal]:hidden [&::-webkit-search-cancel-button]:hidden"
       />
       {escapeButton && (
         <Button
           onPress={() => state?.close()}
-          className="hidden cursor-pointer rounded border text-current/90 data-hovered:bg-muted lg:inline lg:px-1.5 lg:py-0.5 lg:text-xs"
+          className="hidden cursor-pointer rounded border text-current/90 hover:bg-muted lg:inline lg:px-1.5 lg:py-0.5 lg:text-xs"
         >
           Esc
         </Button>
@@ -216,14 +218,14 @@ const CommandMenuDescription = ({ intent, className, ...props }: CommandMenuDesc
       className={cn(
         "ml-auto hidden text-sm sm:inline",
         intent === "danger"
-          ? "text-danger/90 group-data-selected:text-fg/70"
+          ? "text-danger/90 group-selected:text-fg/70"
           : intent === "warning"
-            ? "text-warning/90 group-data-selected:text-fg/70"
+            ? "text-warning/90 group-selected:text-fg/70"
             : intent === "success"
-              ? "text-success/90 group-data-selected:text-fg/70"
+              ? "text-success/90 group-selected:text-fg/70"
               : intent === "primary"
-                ? "text-fg/90 group-data-selected:text-white/70"
-                : "text-muted-fg group-data-selected:text-fg/70",
+                ? "text-fg/90 group-selected:text-white/70"
+                : "text-muted-fg group-selected:text-fg/70",
         className,
       )}
     />
@@ -252,10 +254,12 @@ const CommandMenuSeparator = ({
   <Menu.Separator className={cn("-mx-2", className)} {...props} />
 )
 
+const CommandMenuLabel = Menu.Label
+
 CommandMenu.Search = CommandMenuSearch
 CommandMenu.List = CommandMenuList
 CommandMenu.Item = CommandMenuItem
-CommandMenu.Label = Menu.Label
+CommandMenu.Label = CommandMenuLabel
 CommandMenu.Section = CommandMenuSection
 CommandMenu.Description = CommandMenuDescription
 CommandMenu.Keyboard = DropdownKeyboard

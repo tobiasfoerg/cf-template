@@ -1,0 +1,41 @@
+diff --git a/dist/useId.mjs b/dist/useId.mjs
+index 3f7b916198580b87f7575ebfab1231ae8893bffe..9e8936abb3876708e84c70c16b43fc8d58116866 100644
+--- a/dist/useId.mjs
++++ b/dist/useId.mjs
+@@ -23,15 +23,21 @@ let $bdb11010cef70236$export$d41a04c74483c6ef = new Map();
+ // This allows us to clean up the idsUpdaterMap when the id is no longer used.
+ // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
+ // This can happen in suspended components where mount/unmount is not called.
+-let $bdb11010cef70236$var$registry = new FinalizationRegistry((heldValue)=>{
+-    $bdb11010cef70236$export$d41a04c74483c6ef.delete(heldValue);
+-});
++let $bdb11010cef70236$var$registry;
++if (typeof FinalizationRegistry !== 'undefined'){
++    $bdb11010cef70236$var$registry = new FinalizationRegistry((heldValue)=>{
++        $bdb11010cef70236$export$d41a04c74483c6ef.delete(heldValue);
++    });
++}
++
+ function $bdb11010cef70236$export$f680877a34711e37(defaultId) {
+     let [value, setValue] = (0, $eKkEp$useState)(defaultId);
+     let nextId = (0, $eKkEp$useRef)(null);
+     let res = (0, $eKkEp$useSSRSafeId)(value);
+     let cleanupRef = (0, $eKkEp$useRef)(null);
+-    $bdb11010cef70236$var$registry.register(cleanupRef, res);
++    if($bdb11010cef70236$var$registry){
++        $bdb11010cef70236$var$registry.register(cleanupRef, res);
++    }
+     if ($bdb11010cef70236$var$canUseDOM) {
+         const cacheIdRef = $bdb11010cef70236$export$d41a04c74483c6ef.get(res);
+         if (cacheIdRef && !cacheIdRef.includes(nextId)) cacheIdRef.push(nextId);
+@@ -44,7 +50,9 @@ function $bdb11010cef70236$export$f680877a34711e37(defaultId) {
+         return ()=>{
+             // In Suspense, the cleanup function may be not called
+             // when it is though, also remove it from the finalization registry.
+-            $bdb11010cef70236$var$registry.unregister(cleanupRef);
++            if($bdb11010cef70236$var$registry){
++                $bdb11010cef70236$var$registry.unregister(cleanupRef);
++            }
+             $bdb11010cef70236$export$d41a04c74483c6ef.delete(r);
+         };
+     }, [

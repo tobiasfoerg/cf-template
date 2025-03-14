@@ -1,10 +1,10 @@
-import { AUTH_CONTEXT, pull } from "@/context";
+import { auth } from "@/lib/auth/.server";
 import type { Route } from "./+types";
 
 export async function loader({ request }: Route.LoaderArgs) {
-	return pull(AUTH_CONTEXT).handler(request);
+	return auth.handler(request);
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	return pull(AUTH_CONTEXT).handler(request);
+	return auth.handler(request);
 }

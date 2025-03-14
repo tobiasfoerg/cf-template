@@ -5,16 +5,16 @@ import {
 } from "react-aria-components"
 import { tv } from "tailwind-variants"
 
-import { focusButtonStyles } from "./primitive"
-
 const linkStyles = tv({
-  extend: focusButtonStyles,
-  base: "transition-[color,_opacity] data-disabled:cursor-default data-disabled:opacity-60 forced-colors:data-disabled:text-[GrayText]",
+  base: "outline-0 outline-offset-2 transition-[color,_opacity] focus-visible:outline-2 focus-visible:outline-ring forced-colors:outline-[Highlight]",
   variants: {
     intent: {
       unstyled: "text-current",
-      primary: "text-fg data-hovered:underline",
-      secondary: "text-muted-fg data-hovered:text-secondary-fg",
+      primary: "text-primary hover:underline",
+      secondary: "text-secondary-fg hover:underline",
+    },
+    isDisabled: {
+      true: "cursor-default opacity-60 forced-colors:disabled:text-[GrayText]",
     },
   },
   defaultVariants: {
@@ -44,4 +44,4 @@ const Link = ({ className, ref, ...props }: LinkProps) => {
 }
 
 export type { LinkProps }
-export { Link }
+export { Link, linkStyles }

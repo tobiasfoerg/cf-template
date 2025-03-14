@@ -14,50 +14,26 @@ import {
 	SidebarProvider,
 	SidebarSection,
 	SidebarSectionGroup,
+	SidebarSeparator,
 	SidebarTrigger,
 } from "@/components/ui";
-import { AUTH_CONTEXT, pull } from "@/context";
+import { SESSION } from "@/context";
 import { NAV_ITEMS, type NavigationNode, groupBy, isActive } from "@/lib/navigation";
-import { Outlet, href, redirect, useLocation } from "react-router";
+import { authenticationMiddleware } from "@/middlewares/authentication.server";
+import { Outlet, href, useLocation } from "react-router";
 import type { Route } from "./+types";
+import { extractBreadcrumbs } from "./breadcrumbs";
 import { CommandPalette } from "./command-palette";
 import { ProfileMenu } from "./profile-menu";
 
-export async function loader({ request }: Route.LoaderArgs) {
-	const session = await pull(AUTH_CONTEXT).api.getSession({
-		headers: request.headers,
-	});
+export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [authenticationMiddleware()];
 
-	if (!session) {
-		throw redirect("/login");
-	}
+export async function loader({ context }: Route.LoaderArgs) {
+	const session = context.get(SESSION);
 
 	return {
 		user: session.user,
 	};
-}
-
-function extractBreadcrumbs(matches: Route.ComponentProps["matches"]) {
-	const breadcrumbs = new Map<string, string>();
-	for (const match of matches) {
-		if (!match) continue;
-
-		if (match.pathname === "/") {
-			breadcrumbs.set("/", "Dashboard");
-			continue;
-		}
-
-		if (
-			typeof match.handle === "object" &&
-			match.handle !== null &&
-			"title" in match.handle &&
-			typeof match.handle.title === "string"
-		) {
-			breadcrumbs.set(match.pathname.replace(/\/$/, ""), match.handle.title);
-		}
-	}
-
-	return breadcrumbs;
 }
 
 export default function Component({ loaderData, matches }: Route.ComponentProps) {
@@ -71,7 +47,7 @@ export default function Component({ loaderData, matches }: Route.ComponentProps)
 	const nav = groupBy(NAV_ITEMS, "section");
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={matches[0].data.requestInfo.userPreferences.sidebar}>
 			<Sidebar collapsible="dock">
 				<SidebarHeader>
 					<Link
@@ -101,8 +77,8 @@ export default function Component({ loaderData, matches }: Route.ComponentProps)
 						))}
 					</SidebarSectionGroup>
 				</SidebarContent>
-
-				<SidebarFooter className="hidden md:block mb-4">
+				<SidebarSeparator className="mb-0" />
+				<SidebarFooter className="hidden md:block">
 					<ProfileMenu user={loaderData.user} />
 				</SidebarFooter>
 			</Sidebar>

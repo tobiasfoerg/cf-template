@@ -9,6 +9,7 @@ interface IconRawProps extends Omit<React.SVGProps<SVGSVGElement>, "children"> {
 export function IconRaw({ name, className, ...props }: IconRawProps) {
 	return (
 		<svg
+			role="graphics-symbol img"
 			className={cn("inline-block flex-shrink-0", className)}
 			data-name={name}
 			data-slot="icon"
@@ -16,7 +17,6 @@ export function IconRaw({ name, className, ...props }: IconRawProps) {
 			height={24}
 			{...props}
 		>
-			<title>{name}</title>
 			<use href={`${spriteHref}#${name}`} />
 		</svg>
 	);
@@ -36,12 +36,5 @@ export function Icon({ name, children, className, ...props }: IconProps) {
 		);
 	}
 
-	return (
-		<IconRaw
-			name={name}
-			role="graphics-symbol img"
-			{...props}
-			className={cn("inline size-[1em] self-center text-[inherit]", className)}
-		/>
-	);
+	return <IconRaw name={name} {...props} className={cn("inline size-[1em] self-center text-[inherit]", className)} />;
 }

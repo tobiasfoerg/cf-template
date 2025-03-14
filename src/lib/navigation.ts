@@ -16,10 +16,7 @@ export type Section = {
 	children: Array<NavigationNode>;
 };
 
-export function isActive<T extends Pick<NavigationNode, "to" | "end">>(
-	location: Location,
-	node: T,
-): T & { isActive: boolean } {
+export function isActive<T extends { to: To; end?: true }>(location: Location, node: T): T & { isActive: boolean } {
 	const { pathname: toPathname } = resolvePath(node.to);
 	const { pathname: currentPathname } = location;
 
@@ -55,6 +52,14 @@ export const NAV_ITEMS = [
 		end: true,
 		section: "Settings",
 		keywords: ["security", "settings", "password", "passkey"],
+	},
+	{
+		title: "API Keys",
+		icon: "key-round",
+		to: href("/settings/api-keys"),
+		end: true,
+		section: "Settings",
+		keywords: ["security", "settings", "api-key", "api-keys"],
 	},
 ] as const satisfies Array<NavigationNode>;
 

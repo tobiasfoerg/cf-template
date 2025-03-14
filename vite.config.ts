@@ -7,28 +7,24 @@ import { iconsSpritesheet } from "vite-plugin-icons-spritesheet";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(() => ({
-	ssr: {
-		resolve: {
-			conditions: ["workerd", "worker", "browser"],
-		},
-	},
-	resolve: {
-		mainFields: ["browser", "module", "main"],
+	esbuild: {
+		target: "es2022",
 	},
 	build: {
 		minify: true,
+		sourcemap: true,
 	},
-	optimizeDeps: {
-		exclude: ["node:async_hooks"],
+	server: {
+		warmup: {
+			clientFiles: ["./src/entry.client.tsx", "./src/root.tsx", "./src/routes/**/*.tsx"],
+			ssrFiles: ["./worker/app.ts", "./src/entry.server.tsx", "./src/routes/**/*.tsx"],
+		},
 	},
 	plugins: [
 		cloudflare({
-			viteEnvironment: { name: "worker" },
+			viteEnvironment: { name: "ssr" },
 		}),
-		reactRouter().map((pl) => ({
-			...pl,
-			configureServer: pl.name === "react-router" ? undefined : pl.configureServer,
-		})),
+		reactRouter(),
 		tsconfigPaths(),
 		tailwindcss(),
 		iconsSpritesheet({

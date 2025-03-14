@@ -12,36 +12,48 @@ import { RouterProvider } from "@/components/router-provider";
 import type { Route } from "./+types/root";
 
 import { preload } from "react-dom";
-import { getSessionWithDefaults } from "./lib/cookie.server";
+import { SIDEBAR_COOKIE_NAME } from "./components/ui";
+import { ClientHintCheck, getHints } from "./lib/client-hints";
 import stylesheet from "./styles/app.css?url";
+import { parseCookieHeader } from "./utils/parse-cookie-header";
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-	const preferences = await getSessionWithDefaults(request, {
-		locale: context.locale,
-		theme: "system",
-		timezone: context.timezone,
-		sidebar: "expanded",
-	});
+import dayjs from "dayjs";
+import { APP_NAME } from "./lib/constants";
+
+export async function loader({ request }: Route.LoaderArgs) {
+	const cookies = parseCookieHeader(request.headers.get("cookie"));
 
 	return {
-		preferences,
+		requestInfo: {
+			hints: getHints(request),
+			userPreferences: {
+				sidebar: cookies[SIDEBAR_COOKIE_NAME] === "true",
+			},
+		},
 	};
 }
 
+export const meta: Route.MetaFunction = () => {
+	return [{ title: APP_NAME }];
+};
+
 export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
 	preload(stylesheet, { as: "style" });
-	return await serverLoader();
+	const data = await serverLoader();
+	dayjs.locale(data.requestInfo.hints.locale);
+	return data;
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	const data = useRouteLoaderData<typeof clientLoader>("root");
 	return (
-		<html lang="en" data-theme={data?.preferences.theme}>
+		<html lang="en" data-theme={data?.requestInfo.hints.theme}>
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<Meta />
 				<Links />
+				<Meta />
+				<ClientHintCheck />
 				<link href={stylesheet} rel="stylesheet" />
 			</head>
 			<body>

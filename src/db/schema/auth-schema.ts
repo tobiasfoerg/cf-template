@@ -8,27 +8,8 @@ export const user = sqliteTable("user", {
 	image: text("image"),
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	role: text("role"),
-	banned: integer("banned", { mode: "boolean" }),
-	banReason: text("ban_reason"),
-	banExpires: integer("ban_expires", { mode: "timestamp" }),
 	firstName: text("first_name").notNull(),
 	lastName: text("last_name").notNull(),
-});
-
-export const session = sqliteTable("session", {
-	id: text("id").primaryKey(),
-	expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
-	token: text("token").notNull().unique(),
-	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	ipAddress: text("ip_address"),
-	userAgent: text("user_agent"),
-	userId: text("user_id")
-		.notNull()
-		.references(() => user.id),
-	impersonatedBy: text("impersonated_by"),
-	activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = sqliteTable("account", {
@@ -37,7 +18,7 @@ export const account = sqliteTable("account", {
 	providerId: text("provider_id").notNull(),
 	userId: text("user_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: "cascade" }),
 	accessToken: text("access_token"),
 	refreshToken: text("refresh_token"),
 	idToken: text("id_token"),
@@ -64,13 +45,39 @@ export const passkey = sqliteTable("passkey", {
 	publicKey: text("public_key").notNull(),
 	userId: text("user_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: "cascade" }),
 	credentialID: text("credential_i_d").notNull(),
 	counter: integer("counter").notNull(),
 	deviceType: text("device_type").notNull(),
 	backedUp: integer("backed_up", { mode: "boolean" }).notNull(),
 	transports: text("transports"),
 	createdAt: integer("created_at", { mode: "timestamp" }),
+});
+
+export const apikey = sqliteTable("apikey", {
+	id: text("id").primaryKey(),
+	name: text("name"),
+	start: text("start"),
+	prefix: text("prefix"),
+	key: text("key").notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	refillInterval: integer("refill_interval"),
+	refillAmount: integer("refill_amount"),
+	lastRefillAt: integer("last_refill_at", { mode: "timestamp" }),
+	enabled: integer("enabled", { mode: "boolean" }),
+	rateLimitEnabled: integer("rate_limit_enabled", { mode: "boolean" }),
+	rateLimitTimeWindow: integer("rate_limit_time_window"),
+	rateLimitMax: integer("rate_limit_max"),
+	requestCount: integer("request_count"),
+	remaining: integer("remaining"),
+	lastRequest: integer("last_request", { mode: "timestamp" }),
+	expiresAt: integer("expires_at", { mode: "timestamp" }),
+	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+	permissions: text("permissions"),
+	metadata: text("metadata"),
 });
 
 export const organization = sqliteTable("organization", {
@@ -86,10 +93,10 @@ export const member = sqliteTable("member", {
 	id: text("id").primaryKey(),
 	organizationId: text("organization_id")
 		.notNull()
-		.references(() => organization.id),
+		.references(() => organization.id, { onDelete: "cascade" }),
 	userId: text("user_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: "cascade" }),
 	role: text("role").notNull(),
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
@@ -98,12 +105,12 @@ export const invitation = sqliteTable("invitation", {
 	id: text("id").primaryKey(),
 	organizationId: text("organization_id")
 		.notNull()
-		.references(() => organization.id),
+		.references(() => organization.id, { onDelete: "cascade" }),
 	email: text("email").notNull(),
 	role: text("role"),
 	status: text("status").notNull(),
 	expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
 	inviterId: text("inviter_id")
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: "cascade" }),
 });

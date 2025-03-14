@@ -1,4 +1,5 @@
-import { adminAc, createAccessControl, defaultStatements, memberAc, ownerAc } from "better-auth/plugins/access";
+import { createAccessControl } from "better-auth/plugins/access";
+import { adminAc, defaultStatements, memberAc, ownerAc } from "better-auth/plugins/organization/access";
 
 const statement = {
 	...defaultStatements,
@@ -17,3 +18,9 @@ export const admin = ac.newRole({
 export const member = ac.newRole({
 	...memberAc.statements,
 });
+
+type Permission<Statements extends Record<string, readonly string[]>> = {
+	[P in keyof Statements]: Array<Statements[P][number]>;
+};
+
+export type Permissions = Permission<typeof ac.statements>;

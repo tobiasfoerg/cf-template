@@ -13,13 +13,13 @@ import { Description, FieldError, FieldGroup, Input, Label } from "./field"
 import { composeTailwindRenderProps } from "./primitive"
 
 const fieldBorderStyles = tv({
-  base: "group-data-focused:border-primary/70 forced-colors:border-[Highlight]",
+  base: "group-focus:border-primary/70 forced-colors:border-[Highlight]",
   variants: {
     isInvalid: {
-      true: "group-data-focused:border-danger/70 forced-colors:border-[Mark]",
+      true: "group-focus:border-danger/70 forced-colors:border-[Mark]",
     },
     isDisabled: {
-      true: "group-data-focused:border-input/70",
+      true: "group-focus:border-input/70",
     },
   },
 })
@@ -28,7 +28,7 @@ const numberFieldStyles = tv({
   slots: {
     base: "group flex flex-col gap-y-1.5",
     stepperButton:
-      "h-10 cursor-default px-3 text-muted-fg data-pressed:bg-primary data-pressed:text-primary-fg group-data-disabled:bg-secondary/70 forced-colors:group-data-disabled:text-[GrayText]",
+      "h-10 cursor-default pressed:bg-primary px-3 pressed:text-primary-fg text-muted-fg group-disabled:bg-secondary/70 forced-colors:group-disabled:text-[GrayText]",
   },
 })
 
@@ -57,7 +57,7 @@ const NumberField = ({
         {(renderProps) => (
           <>
             {isMobile ? <StepperButton slot="decrement" className="border-r" /> : null}
-            <Input className="tabular-nums" placeholder={placeholder} />
+            <Input className="px-13 tabular-nums sm:px-2.5" placeholder={placeholder} />
             <div
               className={fieldBorderStyles({
                 ...renderProps,

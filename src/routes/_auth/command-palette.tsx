@@ -1,9 +1,9 @@
 import { Icon } from "@/components/icon";
+import { Button, CommandMenu, Keyboard } from "@/components/ui";
 import { authClient } from "@/lib/auth/.client";
 import { NAV_ITEMS, groupBy, toFilterString } from "@/lib/navigation";
 import * as React from "react";
 import { href, useNavigate, useNavigation } from "react-router";
-import { Button, CommandMenu, Keyboard } from "ui";
 
 export function CommandPalette() {
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -27,7 +27,7 @@ export function CommandPalette() {
 
 	return (
 		<>
-			<Button appearance="outline" onPress={() => setIsOpen(true)}>
+			<Button intent="outline" onPress={() => setIsOpen(true)}>
 				<Icon name="search" />
 				<span className="text-muted-fg">Search...</span>
 				<Keyboard keys="⌘K" />

@@ -1,28 +1,24 @@
-import { type FieldMetadata, getFormProps, getInputProps, useForm } from "@conform-to/react";
-import { getValibotConstraint, parseWithValibot } from "conform-to-valibot";
 import type { Route } from "./+types";
 
 import { Icon } from "@/components/icon";
 import { Button, Card, Checkbox, TextField } from "@/components/ui";
 import { authClient } from "@/lib/auth/.client";
-import { getErrorProps, getInputFieldProps } from "@/lib/form/utils";
+import { getInputFieldProps } from "@/lib/form/utils";
+import { getFormProps, useForm, useInputControl } from "@conform-to/react";
+import { parseWithValibot } from "conform-to-valibot";
 import * as React from "react";
 import { Form, href, redirect } from "react-router";
-import { schema } from "./validation";
+import { schema } from "./form";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
 	const formData = await request.formData();
 	const { searchParams } = new URL(request.url);
-	const submission = parseWithValibot(formData, {
-		schema,
-	});
 
+	const submission = parseWithValibot(formData, { schema });
 	if (submission.status !== "success") {
 		return submission.reply();
 	}
-
 	const continueWith = searchParams.get("continue") ?? href("/");
-
 	switch (submission.value._action) {
 		case "LOGIN:EMAIL": {
 			const result = await authClient.signIn.email({
@@ -30,28 +26,25 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 				password: submission.value.password,
 				rememberMe: submission.value.rememberMe,
 			});
+
+			console.log(result);
+
 			if (result.error) {
-				const formErrors = [];
-				if (result.error.message) {
-					formErrors.push(result.error.message);
-				}
-				return submission.reply({ formErrors });
+				// TODO: add error message
+				return submission.reply();
 			}
+
 			throw redirect(continueWith);
 		}
 		case "LOGIN:PASSKEY": {
-			const result = await authClient.signIn.passkey();
+			const result = await authClient.signIn.passkey({ email: submission.value.email });
+
 			if (result?.error) {
-				const formErrors = [];
-				if (result.error.message) {
-					formErrors.push(result.error.message);
-				}
-				return submission.reply({ formErrors });
+				// TODO: add error message
+				return submission.reply();
 			}
+
 			throw redirect(continueWith);
-		}
-		default: {
-			return submission.reply();
 		}
 	}
 }
@@ -59,13 +52,13 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 export default function Component({ actionData }: Route.ComponentProps) {
 	const [form, fields] = useForm({
 		lastResult: actionData,
-		shouldValidate: "onSubmit",
-		shouldRevalidate: "onBlur",
-		constraint: getValibotConstraint(schema),
 		onValidate({ formData }) {
+			console.log("formData", Object.fromEntries(formData.entries()));
 			return parseWithValibot(formData, { schema });
 		},
 	});
+
+	const checkboxControl = useInputControl(fields.rememberMe);
 
 	React.useEffect(() => {
 		if (
@@ -86,32 +79,31 @@ export default function Component({ actionData }: Route.ComponentProps) {
 					<Card.Description>Sign in to your account to access your dashboard.</Card.Description>
 				</Card.Header>
 				<Card.Content>
-					<Form className="grid grid-flow-row gap-4" method="POST" {...getFormProps(form)}>
-						{form.errors && (
-							<ul className="text-danger text-sm">
-								{form.errors.map((error) => (
-									<li key={error}>{error}</li>
-								))}
-							</ul>
-						)}
+					<Form {...getFormProps(form)} className="grid grid-flow-row gap-4" method="POST">
 						<TextField
 							label="Email"
-							{...getInputFieldProps(fields.email)}
+							autoFocus
+							placeholder="example@email.com"
 							autoComplete="username webauthn"
+							{...getInputFieldProps(fields.email)}
 						/>
+
 						<TextField
 							label="Password"
-							{...getInputFieldProps(fields.password, { type: "password" })}
-							type="password"
-							autoComplete="current-password webauthn"
 							isRevealable
+							placeholder="********"
+							autoComplete="current-password webauthn"
+							{...getInputFieldProps(fields.password)}
+							type="password"
 						/>
-						<Checkbox {...getInputProps(fields.rememberMe, { type: "checkbox" })}>Remember me</Checkbox>
+
+						<Checkbox {...getInputFieldProps(fields.rememberMe)}>Remember me</Checkbox>
+
 						<Button type="submit" name="_action" value="LOGIN:EMAIL">
 							Login
 						</Button>
 
-						<Button type="submit" name="_action" value="LOGIN:PASSKEY" appearance="outline">
+						<Button type="submit" name="_action" value="LOGIN:PASSKEY" intent="outline">
 							<Icon name="fingerprint">Signin with Passkey</Icon>
 						</Button>
 					</Form>

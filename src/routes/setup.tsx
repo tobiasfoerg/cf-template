@@ -1,4 +1,3 @@
-import { AUTH_CONTEXT, pull } from "@/context";
 import { authClient } from "@/lib/auth/.client";
 import type { Route } from "./+types/setup";
 
@@ -16,10 +15,6 @@ async function bootstrap() {
 		slug: "tobias-foerg",
 		userId: user?.user.id,
 	});
-}
-
-export async function action() {
-	const auth = pull(AUTH_CONTEXT);
 }
 
 export default function Component(_: Route.ComponentProps) {

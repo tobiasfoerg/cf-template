@@ -37,18 +37,15 @@ const SearchField = ({
         <>
           {label && <Label>{label}</Label>}
           <FieldGroup>
-            <IconSearch />
+            {isPending ? <Loader variant="spin" /> : <IconSearch />}
             <Input placeholder={placeholder ?? "Search..."} />
-            {isPending ? (
-              <Loader variant="spin" />
-            ) : (
-              <Button
-                appearance="plain"
-                className="size-8 text-muted-fg data-hovered:bg-transparent data-pressed:bg-transparent data-hovered:text-fg data-pressed:text-fg group-data-empty/search-field:invisible"
-              >
-                <IconX />
-              </Button>
-            )}
+
+            <Button
+              intent="plain"
+              className="size-8 pressed:bg-transparent pressed:text-fg text-muted-fg hover:bg-transparent hover:text-fg group-data-empty/search-field:invisible"
+            >
+              <IconX />
+            </Button>
           </FieldGroup>
           {description && <Description>{description}</Description>}
           <FieldError>{errorMessage}</FieldError>

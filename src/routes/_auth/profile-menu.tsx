@@ -1,9 +1,10 @@
-import { Icon } from "@/components/icon";
-import { authClient } from "@/lib/auth/.client";
-import { PROFILE_MENU } from "@/lib/navigation";
 import * as React from "react";
 import { href, useNavigate } from "react-router";
-import { Avatar, Menu } from "ui";
+
+import { Icon } from "@/components/icon";
+import { Avatar, Menu } from "@/components/ui";
+import { authClient } from "@/lib/auth/.client";
+import { PROFILE_MENU } from "@/lib/navigation";
 
 export function ProfileMenu({
 	user,
@@ -16,13 +17,13 @@ export function ProfileMenu({
 	return (
 		<Menu>
 			<Menu.Trigger aria-label="Profile" data-slot="menu-trigger" className="ml-auto md:hidden">
-				<Avatar shape="square" src={user.image} initials={initials} />
+				<Avatar shape="square" src={user.image ?? null} initials={initials} />
 				<div className="hidden md:block text-sm group-data-[sidebar-collapsible=dock]/sidebar-container:hidden">
 					{user.firstName} {user.lastName}
 					<span className="-mt-0.5 block text-muted-fg">{user.email}</span>
 				</div>
 				<Icon
-					name="chevron-down"
+					name="chevrons-up-down"
 					className="hidden md:block absolute right-3 size-4 group-data-[sidebar-collapsible=dock]/sidebar-container:hidden transition-transform group-pressed:rotate-180"
 				/>
 			</Menu.Trigger>
@@ -30,7 +31,7 @@ export function ProfileMenu({
 				<Menu.Section>
 					<Menu.Header separator>
 						<div className="grid grid-cols-[auto_1fr] gap-2 items-center">
-							<Avatar shape="square" src={user.image} initials={initials} />
+							<Avatar shape="square" src={user.image ?? null} initials={initials} />
 							<div>
 								<span className="block">
 									{user.firstName} {user.lastName}

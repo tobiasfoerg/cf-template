@@ -51,7 +51,7 @@ const radioStyles = tv({
     isFocused: {
       true: [
         "border-ring bg-primary/20 ring-4 ring-primary/20",
-        "group-data-invalid:border-danger/70 group-data-invalid:bg-danger/20 group-data-invalid:ring-danger/20",
+        "group-invalid:border-danger/70 group-invalid:bg-danger/20 group-invalid:ring-danger/20",
       ],
     },
     isInvalid: {
@@ -75,7 +75,7 @@ const Radio = ({ description, label, ref, ...props }: RadioProps) => {
       ref={ref}
       className={composeTailwindRenderProps(
         props.className,
-        "group flex items-center gap-2 text-fg text-sm transition disabled:text-fg/50 forced-colors:data-disabled:text-[GrayText]",
+        "group flex items-center gap-2 text-fg text-sm transition disabled:text-fg/50 forced-colors:disabled:text-[GrayText]",
       )}
       {...props}
     >

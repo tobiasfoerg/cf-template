@@ -1,8 +1,9 @@
-import { drizzle } from "drizzle-orm/d1";
+import { env } from "cloudflare:workers";
+import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
+
 import * as schema from "./schema";
+import { relations } from "./relations";
 
-export function init_db(db: D1Database) {
-	return drizzle(db, { schema });
-}
+export const db = drizzle(env.DB, { schema, relations, casing: "snake_case" });
 
-export type DB = ReturnType<typeof init_db>;
+export type DB = DrizzleD1Database<typeof schema>;
