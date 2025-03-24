@@ -1,6 +1,6 @@
 import { authClient } from "@/lib/auth/.client";
 import { APP_NAME } from "@/lib/constants";
-import { parseWithValibot } from "conform-to-valibot";
+import { parseWithValibot } from "@conform-to/valibot";
 import type { Route } from "./+types";
 import { ApiKeySection } from "./api-keys-section";
 import { schema } from "./validation";

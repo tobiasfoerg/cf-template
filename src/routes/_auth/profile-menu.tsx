@@ -14,23 +14,37 @@ export function ProfileMenu({
 	const navigate = useNavigate();
 	const initials = user.firstName[0] + user.firstName[0];
 
+	function handleSignOut() {
+		React.startTransition(async () => {
+			await authClient.signOut({
+				fetchOptions: {
+					onSuccess() {
+						navigate(href("/login"), {
+							replace: true,
+						});
+					},
+				},
+			});
+		});
+	}
+
 	return (
 		<Menu>
 			<Menu.Trigger aria-label="Profile" data-slot="menu-trigger" className="ml-auto md:hidden">
 				<Avatar shape="square" src={user.image ?? null} initials={initials} />
-				<div className="hidden md:block text-sm group-data-[sidebar-collapsible=dock]/sidebar-container:hidden">
+				<div className="hidden text-sm group-data-[sidebar-collapsible=dock]/sidebar-container:hidden md:block">
 					{user.firstName} {user.lastName}
 					<span className="-mt-0.5 block text-muted-fg">{user.email}</span>
 				</div>
 				<Icon
 					name="chevrons-up-down"
-					className="hidden md:block absolute right-3 size-4 group-data-[sidebar-collapsible=dock]/sidebar-container:hidden transition-transform group-pressed:rotate-180"
+					className="absolute right-3 hidden size-4 transition-transform group-pressed:rotate-180 group-data-[sidebar-collapsible=dock]/sidebar-container:hidden md:block"
 				/>
 			</Menu.Trigger>
 			<Menu.Content placement="bottom right" className="sm:min-w-(--trigger-width)">
 				<Menu.Section>
 					<Menu.Header separator>
-						<div className="grid grid-cols-[auto_1fr] gap-2 items-center">
+						<div className="grid grid-cols-[auto_1fr] items-center gap-2">
 							<Avatar shape="square" src={user.image ?? null} initials={initials} />
 							<div>
 								<span className="block">
@@ -49,21 +63,7 @@ export function ProfileMenu({
 					</Menu.Item>
 				))}
 				<Menu.Separator />
-				<Menu.Item
-					onAction={() =>
-						React.startTransition(async () => {
-							authClient.signOut({
-								fetchOptions: {
-									onSuccess() {
-										navigate(href("/login"), {
-											replace: true,
-										});
-									},
-								},
-							});
-						})
-					}
-				>
+				<Menu.Item onAction={handleSignOut}>
 					<Icon name="log-out" data-slot="icon" />
 					<Menu.Label>Logout</Menu.Label>
 				</Menu.Item>

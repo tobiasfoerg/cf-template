@@ -11,7 +11,7 @@ export default defineConfig(() => ({
 		target: "es2022",
 	},
 	build: {
-		minify: true,
+		minify: false,
 		sourcemap: true,
 	},
 	server: {
@@ -20,11 +20,10 @@ export default defineConfig(() => ({
 			ssrFiles: ["./worker/app.ts", "./src/entry.server.tsx", "./src/routes/**/*.tsx"],
 		},
 	},
+	optimizeDeps: {
+		exclude: ["@opentelemetry/*"],
+	},
 	plugins: [
-		cloudflare({
-			viteEnvironment: { name: "ssr" },
-		}),
-		reactRouter(),
 		tsconfigPaths(),
 		tailwindcss(),
 		iconsSpritesheet({
@@ -37,5 +36,9 @@ export default defineConfig(() => ({
 				return fileName.replace(/\.svg$/, "");
 			},
 		}),
+		cloudflare({
+			viteEnvironment: { name: "ssr" },
+		}),
+		reactRouter(),
 	],
 }));

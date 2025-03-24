@@ -1,3 +1,4 @@
+import type { Context, MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
 import { type ServerBuild, createRequestHandler, type unstable_InitialContext } from "react-router";
 
@@ -10,14 +11,14 @@ declare module "react-router" {
 interface ReactRouterMiddlewareOptions {
 	build: ServerBuild | Promise<ServerBuild>;
 	mode?: "development" | "production";
-	loadContext: unstable_InitialContext;
+	loadContext?: unstable_InitialContext | ((ctx: Context) => unstable_InitialContext);
 }
 
-export const reactRouter = ({ mode, build, loadContext }: ReactRouterMiddlewareOptions) => {
+export function reactRouter({ mode, build, loadContext }: ReactRouterMiddlewareOptions): MiddlewareHandler {
 	return createMiddleware(async (c) => {
 		const requestHandler = createRequestHandler(await build, mode);
 
-		// @ts-expect-error: requestHandler has wrong types. should be unstable_InitialContext
-		return await requestHandler(c.req.raw, loadContext);
+		const context = typeof loadContext === "function" ? loadContext(c) : loadContext;
+		return await requestHandler(c.req.raw, context);
 	});
-};
+}

@@ -8,6 +8,7 @@
 
 # Wrangler
 /.wrangler/
+.dev.vars
 
 
 # TypeScript

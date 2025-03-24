@@ -1,6 +1,4 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-import type { MiddlewareHandler } from "hono";
-import { createMiddleware } from "hono/factory";
+import * as v from "valibot";
 
 abstract class BaseLogger {
 	protected _ctx: ExecutionContext;
@@ -37,25 +35,6 @@ class Logger extends BaseLogger implements Disposable {
 		this._buffer = [];
 	}
 
-	middleware() {
-		return createMiddleware(async (ctx, next) => {
-			const url = new URL(ctx.req.url);
-			const start = Date.now();
-			this.log({
-				level: LogLevel.INFO,
-				timestamp: Date.now(),
-				message: `REQ: ${ctx.req.method} ${url.pathname}`,
-			});
-
-			await next();
-			this.log({
-				level: LogLevel.INFO,
-				timestamp: Date.now(),
-				message: `RES: ${ctx.req.method} ${url.pathname} ${ctx.res.status} ${Date.now() - start}ms`,
-			});
-		});
-	}
-
 	log(event: LogEvent) {
 		this._buffer.push(event);
 	}
@@ -71,27 +50,29 @@ class Logger extends BaseLogger implements Disposable {
 }
 
 export const LogLevel = {
-	DEBUG: "DBG",
-	INFO: "INF",
-	WARN: "WRN",
-	ERROR: "ERR",
+	DBG: "DBG",
+	INF: "INF",
+	WRN: "WRN",
+	ERR: "ERR",
 } as const;
 
 export type LogLevel = (typeof LogLevel)[keyof typeof LogLevel];
+
+const logLevelSchema = v.fallback(v.enum(LogLevel), LogLevel.INF);
 
 export type { Logger };
 
 export class LoggerBuilder {
 	private _ctx: ExecutionContext;
-	private _loglevel: string;
+	private _loglevel: LogLevel;
 	private _reporters: Array<Reporter>;
 
 	constructor(ctx: ExecutionContext) {
 		this._ctx = ctx;
 		this._reporters = [];
 	}
-	loglevel(level: LogLevel) {
-		this._loglevel = level;
+	loglevel(level?: LogLevel | (string & {})) {
+		this._loglevel = v.parse(logLevelSchema, level);
 		return this;
 	}
 

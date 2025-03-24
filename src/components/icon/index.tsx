@@ -30,7 +30,7 @@ export function Icon({ name, children, className, ...props }: IconProps) {
 	if (children) {
 		return (
 			<span className="inline-flex items-center gap-x-[1ch]">
-				<Icon name={name} {...props} className={cn("text-muted-foreground size-[1em]", className)} />
+				<Icon name={name} {...props} className={cn("size-[1em] text-muted-foreground", className)} />
 				<span>{children}</span>
 			</span>
 		);

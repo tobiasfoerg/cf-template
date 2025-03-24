@@ -3,6 +3,7 @@ import {
   type LinkProps as LinkPrimitiveProps,
   composeRenderProps,
 } from "react-aria-components"
+import { useHref, useResolvedPath } from "react-router"
 import { tv } from "tailwind-variants"
 
 const linkStyles = tv({
@@ -28,6 +29,7 @@ interface LinkProps extends LinkPrimitiveProps {
 }
 
 const Link = ({ className, ref, ...props }: LinkProps) => {
+  
   return (
     <LinkPrimitive
       ref={ref}

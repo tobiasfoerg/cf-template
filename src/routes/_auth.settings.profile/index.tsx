@@ -1,4 +1,4 @@
-import { Avatar, Heading, Separator, TextField } from "@/components/ui";
+import { Avatar, Heading, Link, Separator, TextField } from "@/components/ui";
 import { authClient } from "@/lib/auth/.client";
 import { getInputFieldProps } from "@/lib/form/utils";
 import { getFormProps, useForm } from "@conform-to/react";

@@ -12,7 +12,7 @@ export function SessionSection({ sessions }: { sessions: Route.ComponentProps["l
 		<section className="grid grid-flow-row gap-4">
 			<Heading>Sessions</Heading>
 			<Separator />
-			<p className="text-sm text-muted-fg">
+			<p className="text-muted-fg text-sm">
 				Manage your active sessions. You can revoke access to your account from any of the devices listed below.
 			</p>
 			<div className="grid grid-flow-row gap-2">
@@ -30,12 +30,12 @@ export function SessionSection({ sessions }: { sessions: Route.ComponentProps["l
 							{(item) => (
 								<Table.Row id={item.token}>
 									<Table.Cell>
-										<div className="grid grid-cols-[auto_1fr] gap-4 items-center">
+										<div className="grid grid-cols-[auto_1fr] items-center gap-4">
 											<div>
 												<Icon name="monitor" className="size-10" />
 											</div>
 											<div>
-												<p className="text-base font-medium">
+												<p className="font-medium text-base">
 													{item.userAgent?.browser.name} on {item.userAgent?.os.name}
 												</p>
 												<p className="text-sm">

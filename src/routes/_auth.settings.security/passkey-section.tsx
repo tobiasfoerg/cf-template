@@ -18,7 +18,7 @@ export function PasskeySection({ passkeys }: { passkeys: Route.ComponentProps["l
 		<section className="grid grid-flow-row gap-4">
 			<Heading>Passkeys</Heading>
 			<Separator />
-			<p className="text-sm text-muted-fg">
+			<p className="text-muted-fg text-sm">
 				Passkeys are webauthn credentials that validate your identity using touch, facial recognition, a device
 				password, or a PIN. They can be used as a password replacement or as a 2FA method.
 			</p>
@@ -35,7 +35,7 @@ export function PasskeySection({ passkeys }: { passkeys: Route.ComponentProps["l
 							items={passkeys}
 							dependencies={[edit]}
 							renderEmptyState={() => (
-								<div className="flex flex-col items-center justify-center p-8 gap-2">
+								<div className="flex flex-col items-center justify-center gap-2 p-8">
 									<Icon name="key-round" className="text-2xl text-muted-fg" />
 									<p className="text-muted-fg">No passkeys found</p>
 									<AddPasskeyForm intent="plain" />

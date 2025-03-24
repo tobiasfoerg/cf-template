@@ -2,8 +2,11 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "my-worker",
 	"main": "./worker/app.ts",
-	"compatibility_date": "2025-03-11",
+	"compatibility_date": "2025-03-18",
 	"compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
+	"assets": {
+		"directory": "./dist/client"
+	},
 	"observability": {
 		"enabled": true
 	},

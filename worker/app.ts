@@ -1,25 +1,45 @@
+import { WorkerEntrypoint, env } from "cloudflare:workers";
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import { type RequestIdVariables, requestId } from "hono/request-id";
 
-import { WorkerEntrypoint, env } from "cloudflare:workers";
 import { getLoadContext } from "@/context";
 import { reactRouter } from "@worker/middleware/react-router";
-import { ConsoleReporter, LogLevel, type Logger, LoggerBuilder } from "./logger";
+import { ConsoleReporter, type Logger, LoggerBuilder } from "./logger";
+import { type LoggerVariables, loggerMiddleware } from "./logger/hono";
+import type { InstrumentationConfig } from "./opentelemetry/config";
+import { Instrument } from "./opentelemetry/instrumentation";
+import { instrumentServerBuild } from "./opentelemetry/instrumentations/react-router";
+
+import * as serverBuild from "virtual:react-router/server-build";
 
 export interface HonoEnv {
 	Bindings: Env;
-	Variables: RequestIdVariables;
+	Variables: RequestIdVariables & LoggerVariables;
 }
 
-export default class extends WorkerEntrypoint<Env> {
+const APP_NAME = "cf-dashboard";
+
+const config: InstrumentationConfig = {
+	service: {
+		name: APP_NAME,
+		version: env.CF_VERSION_METADATA.id,
+		namespace: "cf-dashboard",
+	},
+	endpoint: process.env.OPENTELEMETRY_ENDPOINT,
+};
+
+@Instrument(config)
+export default class Handler extends WorkerEntrypoint<Env> {
 	private app: Hono<HonoEnv>;
 	private logger: Logger;
 
 	constructor(ctx: ExecutionContext, env: Env) {
 		super(ctx, env);
 		this.app = new Hono<HonoEnv>();
-		this.logger = new LoggerBuilder(ctx).loglevel(LogLevel.INFO).register(new ConsoleReporter()).build("app");
+		this.logger = new LoggerBuilder(ctx)
+			.loglevel(process.env.LOG_LEVEL)
+			.register(new ConsoleReporter())
+			.build(APP_NAME);
 
 		this.bootstrap();
 	}
@@ -27,22 +47,17 @@ export default class extends WorkerEntrypoint<Env> {
 	private bootstrap() {
 		this.app
 			.use(requestId({ headerName: "Cf-Ray" }))
-			.use(logger())
-			.use(this.logger.middleware())
-			.use(async (ctx, next) => {
-				const handler = reactRouter({
-					build: await import("virtual:react-router/server-build"),
+			.use(loggerMiddleware(this.logger))
+			.use(
+				reactRouter({
+					build: instrumentServerBuild(serverBuild),
 					mode: import.meta.env.PROD ? "production" : "development",
-					loadContext: getLoadContext(ctx),
-				});
-
-				return await handler(ctx, next);
-			});
+					loadContext: (ctx) => getLoadContext(ctx),
+				}),
+			);
 	}
 	override async fetch(request: Request<unknown, CfProperties<unknown>>) {
 		using _ = this.logger;
-
-		console.log("fetching", request.url, { importEnv: env, processEnv: process.env, entryEnv: this.env });
 
 		return await this.app.fetch(request, this.env, this.ctx);
 	}

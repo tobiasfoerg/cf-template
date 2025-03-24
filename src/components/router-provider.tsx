@@ -10,6 +10,7 @@ declare module "react-aria-components" {
 
 export function RouterProvider({ children }: { children: React.ReactNode }) {
 	const navigate = useNavigate();
+
 	return (
 		<RouterProviderPrimitive navigate={navigate} useHref={useHref}>
 			{children}

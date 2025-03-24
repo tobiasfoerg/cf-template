@@ -7,8 +7,7 @@
 		"src/**/.server/**/*",
 		"src/**/.client/**/*",
 		"worker/**/*",
-		"worker-configuration.d.ts",
-		"modules.d.ts"
+		"worker-configuration.d.ts"
 	],
 	"compilerOptions": {
 		"composite": true,

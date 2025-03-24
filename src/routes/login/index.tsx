@@ -72,7 +72,7 @@ export default function Component({ actionData }: Route.ComponentProps) {
 	}, []);
 
 	return (
-		<div className="flex justify-center min-h-screen items-center">
+		<div className="flex min-h-screen items-center justify-center">
 			<Card className="w-full p-4 sm:max-w-md">
 				<Card.Header>
 					<Card.Title>Login</Card.Title>
