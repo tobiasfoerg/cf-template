@@ -83,7 +83,7 @@
 		"tailwindcss-animate": "^1.0.7",
 		"type-fest": "^4.37.0",
 		"typescript": "^5.8.2",
-		"vite": "^6.2.2",
+		"vite": "^6.2.3",
 		"vite-plugin-icons-spritesheet": "^3.0.1",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.0.9",
