@@ -58,7 +58,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@cloudflare/vite-plugin": "^0.1.15",
+		"@cloudflare/vite-plugin": "^1.6.0",
 		"@libsql/client": "^0.15.0",
 		"@react-router/dev": "^7.4.0",
 		"@react-router/fs-routes": "^7.4.0",
