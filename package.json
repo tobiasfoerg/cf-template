@@ -75,7 +75,7 @@
 		"drizzle-kit": "^1.0.0-beta.1-af4c434",
 		"justd-cli": "^2.7.2",
 		"msw": "^2.7.3",
-		"playwright": "^1.51.1",
+		"playwright": "^1.55.1",
 		"react-stately": "^3.36.1",
 		"tailwind-merge": "^3.0.2",
 		"tailwind-variants": "^1.0.0",
