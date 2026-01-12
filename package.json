@@ -54,7 +54,7 @@
 		"react-router": "^7.4.0",
 		"react-use": "^17.6.0",
 		"ua-parser-js": "^2.0.3",
-		"valibot": "^1.0.0"
+		"valibot": "^1.2.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
