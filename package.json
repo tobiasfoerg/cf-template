@@ -88,7 +88,7 @@
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.0.9",
 		"vitest-browser-react": "^0.1.1",
-		"wrangler": "^4.4.0"
+		"wrangler": "^4.59.1"
 	},
 	"packageManager": "pnpm@10.6.5",
 	"pnpm": {
